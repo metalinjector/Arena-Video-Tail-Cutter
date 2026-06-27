@@ -1,0 +1,29 @@
+# Version control & CI
+.git
+.gitignore
+
+# Dependencies (reinstalled inside the image)
+node_modules
+**/node_modules
+
+# Build outputs (rebuilt inside the image)
+**/dist
+**/.tsbuildinfo
+
+# Runtime temp dirs created by the server
+**/tmp-uploads
+**/tmp-outputs
+
+# Replit / editor / local state
+.local
+.agents
+.config
+.cache
+.upm
+.breakpoints
+attached_assets/screenshots
+
+# Logs & misc
+*.log
+npm-debug.log*
+.DS_Store
