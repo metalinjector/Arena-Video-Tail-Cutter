@@ -4,6 +4,9 @@ import logo from "@assets/image_1782587909428.png";
 
 type Status = "idle" | "uploading" | "done" | "error";
 
+const MAX_SIZE_MB = 50;
+const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
+
 interface TrimResult {
   id: string;
   filename: string;
@@ -24,6 +27,7 @@ export default function App() {
   const [error, setError] = useState<string>("");
   const [progress, setProgress] = useState<string>("");
   const [fileName, setFileName] = useState<string>("");
+  const [oversizeMB, setOversizeMB] = useState<number | null>(null);
 
   const processFile = useCallback(async (file: File) => {
     setStatus("uploading");
@@ -74,7 +78,13 @@ export default function App() {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: (acceptedFiles) => {
-      if (acceptedFiles.length > 0) processFile(acceptedFiles[0]);
+      if (acceptedFiles.length === 0) return;
+      const file = acceptedFiles[0];
+      if (file.size > MAX_SIZE_BYTES) {
+        setOversizeMB(file.size / (1024 * 1024));
+        return;
+      }
+      processFile(file);
     },
     accept: { "video/*": [".mp4", ".mov", ".avi", ".mkv", ".webm", ".m4v"] },
     multiple: false,
@@ -136,7 +146,7 @@ export default function App() {
                   <p className="text-slate-500 text-sm">или нажмите для выбора файла</p>
                 </>
               )}
-              <p className="text-slate-600 text-xs mt-1">MP4, MOV, AVI, MKV, WebM</p>
+              <p className="text-slate-600 text-xs mt-1">MP4, MOV, AVI, MKV, WebM · до {MAX_SIZE_MB} МБ</p>
             </div>
           </div>
         )}
@@ -235,6 +245,36 @@ export default function App() {
           Файлы обрабатываются локально и не сохраняются на сервере
         </p>
       </div>
+
+      {/* Oversize Warning Modal */}
+      {oversizeMB !== null && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/70 backdrop-blur-sm"
+          onClick={() => setOversizeMB(null)}
+        >
+          <div
+            className="w-full max-w-sm rounded-2xl border border-rose-900/50 bg-slate-900 p-7 text-center shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-rose-500/20">
+              <svg className="h-7 w-7 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+              </svg>
+            </div>
+            <h2 className="text-lg font-bold text-white">Файл слишком большой</h2>
+            <p className="mt-2 text-sm text-slate-400">
+              Размер видео — {oversizeMB!.toFixed(1)} МБ. Максимально допустимый размер{" "}
+              <span className="font-medium text-slate-200">{MAX_SIZE_MB} МБ</span>. Пожалуйста, выберите файл поменьше.
+            </p>
+            <button
+              onClick={() => setOversizeMB(null)}
+              className="mt-6 w-full rounded-xl bg-violet-600 py-2.5 px-4 font-medium text-white transition-colors hover:bg-violet-500"
+            >
+              Понятно
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

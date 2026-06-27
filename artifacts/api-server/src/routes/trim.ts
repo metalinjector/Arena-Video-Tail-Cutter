@@ -22,7 +22,7 @@ const SSIM_THRESHOLD = 0.65;
 
 const upload = multer({
   dest: UPLOAD_DIR,
-  limits: { fileSize: 500 * 1024 * 1024 },
+  limits: { fileSize: 50 * 1024 * 1024 },
 });
 
 function ffmpeg(cmd: string): Promise<{ stdout: string; stderr: string }> {
