@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import logo from "@assets/image_1782587909428.png";
 
 type Status = "idle" | "uploading" | "done" | "error";
 
@@ -97,12 +98,12 @@ export default function App() {
       <div className="w-full max-w-xl">
         {/* Header */}
         <div className="mb-10 text-center">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-violet-600 mb-5 shadow-lg shadow-violet-600/30">
-            <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" />
-            </svg>
-          </div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Video Tail Remover</h1>
+          <img
+            src={logo}
+            alt="Arena"
+            className="w-20 h-20 mx-auto mb-5 rounded-2xl shadow-lg shadow-violet-600/30 ring-1 ring-white/10"
+          />
+          <h1 className="text-2xl font-bold text-white tracking-tight">Arena Video Tail Remover</h1>
           <p className="mt-2 text-slate-400 text-sm">
             Автоматически находит и удаляет повторяющийся хвост из видео
           </p>
