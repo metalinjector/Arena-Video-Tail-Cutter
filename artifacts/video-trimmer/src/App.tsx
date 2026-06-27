@@ -34,17 +34,17 @@ export default function App() {
     setResult(null);
     setError("");
     setFileName(file.name);
-    setProgress("Загрузка видео...");
+    setProgress("Uploading video...");
 
     const formData = new FormData();
     formData.append("video", file);
 
     try {
       const progressSteps = [
-        { delay: 1500, msg: "Анализ содержимого..." },
-        { delay: 3000, msg: "Поиск повторяющегося фрагмента..." },
-        { delay: 6000, msg: "Сравнение с образцом..." },
-        { delay: 9000, msg: "Обрезка видео..." },
+        { delay: 1500, msg: "Analyzing content..." },
+        { delay: 3000, msg: "Searching for the repeating segment..." },
+        { delay: 6000, msg: "Comparing with reference..." },
+        { delay: 9000, msg: "Trimming video..." },
       ];
 
       let stepIndex = 0;
@@ -63,15 +63,15 @@ export default function App() {
       clearInterval(timer);
 
       if (!resp.ok) {
-        const body = await resp.json().catch(() => ({ error: "Ошибка сервера" }));
-        throw new Error(body.error || "Ошибка обработки");
+        const body = await resp.json().catch(() => ({ error: "Server error" }));
+        throw new Error(body.error || "Processing error");
       }
 
       const data = await resp.json();
       setResult(data);
       setStatus("done");
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Неизвестная ошибка");
+      setError(e instanceof Error ? e.message : "Unknown error");
       setStatus("error");
     }
   }, []);
@@ -115,7 +115,7 @@ export default function App() {
           />
           <h1 className="text-2xl font-bold text-white tracking-tight">Arena Video Tail Remover</h1>
           <p className="mt-2 text-slate-400 text-sm">
-            Автоматически находит и удаляет повторяющийся хвост из видео
+            Automatically detects and removes the repeating tail from your video
           </p>
         </div>
 
@@ -139,14 +139,14 @@ export default function App() {
                 </svg>
               </div>
               {isDragActive ? (
-                <p className="text-violet-400 font-medium">Отпустите файл...</p>
+                <p className="text-violet-400 font-medium">Drop the file...</p>
               ) : (
                 <>
-                  <p className="text-slate-300 font-medium">Перетащите видео сюда</p>
-                  <p className="text-slate-500 text-sm">или нажмите для выбора файла</p>
+                  <p className="text-slate-300 font-medium">Drag &amp; drop your video here</p>
+                  <p className="text-slate-500 text-sm">or click to browse</p>
                 </>
               )}
-              <p className="text-slate-600 text-xs mt-1">MP4, MOV, AVI, MKV, WebM · до {MAX_SIZE_MB} МБ</p>
+              <p className="text-slate-600 text-xs mt-1">MP4, MOV, AVI, MKV, WebM · up to {MAX_SIZE_MB} MB</p>
             </div>
           </div>
         )}
@@ -177,22 +177,22 @@ export default function App() {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                   </svg>
                 </div>
-                <span className="text-emerald-400 font-medium text-sm">Фрагмент удалён успешно</span>
+                <span className="text-emerald-400 font-medium text-sm">Tail removed successfully</span>
               </div>
               <p className="text-slate-300 text-sm font-medium truncate">{fileName}</p>
             </div>
 
             <div className="grid grid-cols-3 divide-x divide-slate-800">
               <div className="p-4 text-center">
-                <p className="text-slate-500 text-xs mb-1">Исходная</p>
+                <p className="text-slate-500 text-xs mb-1">Original</p>
                 <p className="text-slate-200 font-mono font-medium">{formatTime(result.originalDuration)}</p>
               </div>
               <div className="p-4 text-center">
-                <p className="text-slate-500 text-xs mb-1">Итоговая</p>
+                <p className="text-slate-500 text-xs mb-1">Result</p>
                 <p className="text-emerald-400 font-mono font-medium">{formatTime(result.trimmedDuration)}</p>
               </div>
               <div className="p-4 text-center">
-                <p className="text-slate-500 text-xs mb-1">Удалено</p>
+                <p className="text-slate-500 text-xs mb-1">Removed</p>
                 <p className="text-rose-400 font-mono font-medium">-{formatTime(result.removedSeconds)}</p>
               </div>
             </div>
@@ -206,13 +206,13 @@ export default function App() {
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                 </svg>
-                Скачать видео
+                Download video
               </a>
               <button
                 onClick={reset}
                 className="w-full py-2.5 px-4 text-slate-400 hover:text-slate-200 text-sm transition-colors rounded-xl hover:bg-slate-800"
               >
-                Обработать другое видео
+                Process another video
               </button>
             </div>
           </div>
@@ -228,21 +228,21 @@ export default function App() {
                 </svg>
               </div>
               <div>
-                <p className="text-rose-300 font-medium">Ошибка обработки</p>
+                <p className="text-rose-300 font-medium">Processing error</p>
                 <p className="text-slate-400 text-sm mt-1">{error}</p>
               </div>
               <button
                 onClick={reset}
                 className="mt-2 py-2 px-5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm rounded-lg transition-colors"
               >
-                Попробовать снова
+                Try again
               </button>
             </div>
           </div>
         )}
 
         <p className="text-center text-slate-600 text-xs mt-8">
-          Файлы обрабатываются локально и не сохраняются на сервере
+          Files are processed on the server and deleted automatically after download
         </p>
       </div>
 
@@ -261,16 +261,16 @@ export default function App() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
               </svg>
             </div>
-            <h2 className="text-lg font-bold text-white">Файл слишком большой</h2>
+            <h2 className="text-lg font-bold text-white">File is too large</h2>
             <p className="mt-2 text-sm text-slate-400">
-              Размер видео — {oversizeMB!.toFixed(1)} МБ. Максимально допустимый размер{" "}
-              <span className="font-medium text-slate-200">{MAX_SIZE_MB} МБ</span>. Пожалуйста, выберите файл поменьше.
+              Your video is {oversizeMB!.toFixed(1)} MB. The maximum allowed size is{" "}
+              <span className="font-medium text-slate-200">{MAX_SIZE_MB} MB</span>. Please choose a smaller file.
             </p>
             <button
               onClick={() => setOversizeMB(null)}
               className="mt-6 w-full rounded-xl bg-violet-600 py-2.5 px-4 font-medium text-white transition-colors hover:bg-violet-500"
             >
-              Понятно
+              Got it
             </button>
           </div>
         </div>
